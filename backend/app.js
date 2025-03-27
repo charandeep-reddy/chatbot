@@ -1,55 +1,32 @@
-import dotenv from 'dotenv';
-import express from 'express';
-import bodyParser from 'body-parser';
+const dotenv = require("dotenv")
+const express = require("express")
+const bodyParser = require("body-parser")
 
 const app = express();
-const port = 3000;
 dotenv.config()
 
+app.use(express.json())
 app.use(bodyParser.json())
 // app.use(express.static('public'));
 
-const ApiKey = process.env.Gemini_api_key
-import { GoogleGenAI } from "@google/genai";
+const ApiKey = "AIzaSyBdQniAD9f9fuvUY3LOQ5qPcuUZIdecpkg"
+const {GoogleGenAI} = require("@google/genai")
 
 const ai = new GoogleGenAI({ apiKey: ApiKey });
 
-async function main(userMessage) {
-const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    contents: userMessage,
-    config: {
-        systemInstruction: "Provide Content in Plain Text",
-    },
-});
-return response.text
-console.log(response.text);
-}
-
-
-
+app.post("/chat", async (req,res) => {
+    const {userPrompt} = req.body
+    const response = await ai.models.generateContent({
+        model: "gemini-2.0-flash",
+        contents: userPrompt
+        })
+        res.send({"message" : response.text}).json()
+    })
 
 
 app.get("/",(req,res)=>{
     res.send("Hello Get is working perfectly fine")
 })
-app.post("/chat", async (req,res)=>{
-    try{
-    const userMessage = req.body;
-    const GeminiResponse = await main(userMessage)
 
-    res.json({
-        message:"Gemini  Response has been sent successfully",
-        data : GeminiResponse
-    })
-}
-    catch(err){
-        console.log(`Error:${err}`)
-        res.status(500).json({
-            message:"Internal Server Error",
-            error:err.message
-        })
-    }
-})
 
-module.export = app
+module.exports = app
