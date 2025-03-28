@@ -7,9 +7,8 @@ dotenv.config()
 
 app.use(express.json())
 app.use(bodyParser.json())
-// app.use(express.static('public'));
 
-const ApiKey = "AIzaSyBdQniAD9f9fuvUY3LOQ5qPcuUZIdecpkg"
+const ApiKey = process.env.MY_API_KEY;
 const {GoogleGenAI} = require("@google/genai")
 
 const ai = new GoogleGenAI({ apiKey: ApiKey });
