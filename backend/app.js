@@ -1,5 +1,6 @@
 const dotenv = require("dotenv")
 const express = require("express")
+const {marked} = require("marked")
 const bodyParser = require("body-parser")
 
 const app = express();
@@ -19,12 +20,12 @@ app.post("/chat", async (req,res) => {
         model: "gemini-2.0-flash",
         contents: userPrompt
         })
-        res.send({"message" : response.text}).json()
+        res.send({"message" : marked(response.text)}).json()
     })
 
 
 app.get("/",(req,res)=>{
-    res.send("Hello Get is working perfectly fine")
+    res.sendFile("/home/codegnani/chatbot/frontend/landingpage/page2.html")
 })
 
 

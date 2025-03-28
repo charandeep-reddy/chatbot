@@ -105,7 +105,9 @@ button:hover {
         </div>
     </div>
     <div class="chat-container">
-        <div class="chat-box" id="chat-box"></div>
+        <div class="chat-box" id="chat-box">
+            
+        </div>
         <div class="input-container">
             <input type="text" id="user-input" placeholder="Ask Me Something " />
             <button onclick="sendMessage()">Send</button>
@@ -114,46 +116,23 @@ button:hover {
 
     <script>
 const chatBox = document.getElementById("chat-box");
-const userInput = document.getElementById("user-input");
 
-function sendMessage() {
-    const message = userInput.value.trim();
-    if (message === "") return;
+async function sendMessage() {
+    const userInput = document.getElementById("user-input").value;
+    let response = await fetch("http://localhost:3000/chat",{
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({userPrompt: userInput})
+    });
 
-    
-    appendMessage("user", message);
-    userInput.value = ""; 
-    setTimeout(() => {
-        const aiResponse = getAIResponse(message);
-        appendMessage("ai", aiResponse);
-    }, 1000);  
+    let result = await response.json()
+    let dataDisplay = `<div class="response">
+                <div class="user">${userInput}</div>
+                <div class="ai">${result.message}</div>
+            </div>`
+    chatBox.insertAdjacentHTML("beforeend" , dataDisplay)
 }
 
-function appendMessage(sender, message) {
-    const messageElement = document.createElement("div");
-    messageElement.classList.add(sender + "-message");
-
-    const messageContent = document.createElement("div");
-    messageContent.classList.add("message");
-    messageContent.textContent = message;
-
-    messageElement.appendChild(messageContent);
-    chatBox.appendChild(messageElement);
-
-    chatBox.scrollTop = chatBox.scrollHeight;  // Scroll to bottom
-}
-
-function getAIResponse(userMessage) {
-    // Simulate an AI response (you can integrate a real AI service here)
-    const responses = [
-        "Hi This is Sidhartha Kandula",
-        "Ask me Anything?",
-        "I see. What else is on your mind?",
-        "That's cool! How do you feel about it?",
-        "I think I understand. What do you want to do next?"
-    ];
-    return responses[Math.floor(Math.random() * responses.length)];
-}
 
     </script>
 </body>
